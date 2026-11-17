@@ -1,6 +1,6 @@
 {
   "name": "textoneitor",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Revisor de textos en español: marca lo que suena a máquina (muletillas, rayas de inciso, tríadas, frases todas del mismo largo) y explica por qué. Determinista, sin IA y sin red.",
   "license": "BUSL-1.1",
   "author": "Josulo72 (https://github.com/Josulo72)",

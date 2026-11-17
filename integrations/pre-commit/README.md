@@ -9,7 +9,7 @@ En el `.pre-commit-config.yaml` del proyecto:
 ```yaml
 repos:
   - repo: https://github.com/Josulo72/textoneitor
-    rev: v1.2.1
+    rev: v1.2.2
     hooks:
       - id: textoneitor
 ```
