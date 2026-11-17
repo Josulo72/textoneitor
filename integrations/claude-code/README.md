@@ -12,6 +12,14 @@ El comando `/revisar` hace lo mismo cuando tú lo pides, con un archivo o con un
 
 ## Instalar
 
+Si lo instalas desde el directorio de plugins de Claude, llega sin el bundle de la CLI. La guía funciona igual, pero el comando `/revisar` y los dos hooks necesitan la CLI, así que en el proyecto donde trabajes instálala:
+
+```
+npm i -D textoneitor
+```
+
+Si no quieres instalarla en cada proyecto, apunta `IA_LINTER_CLI` a una CLI que ya tengas. Sin CLI, los hooks no revisan nada y tampoco estorban.
+
 El plugin está en este directorio. Con el repositorio clonado, se carga apuntando ahí al arrancar:
 
 ```
