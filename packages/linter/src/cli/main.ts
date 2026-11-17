@@ -74,7 +74,7 @@ const program = new Command();
 program.exitOverride();
 program
   .name("textoneitor")
-  .description("Linter determinista de patrones de escritura de IA en español. Mide patrones editoriales, no autoría.")
+  .description("Revisor de textos en español: marca lo que suena a máquina y explica por qué. Mide patrones editoriales, no autoría.")
   .version(toolVersion())
   .option("-c, --config <archivo>", "archivo de configuración (por defecto se busca textoneitor.yml hacia arriba)")
   .option("--cwd <dir>", "directorio de trabajo")

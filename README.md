@@ -5,7 +5,7 @@ Dos cosas. Una guía de estilo para que la IA escriba en español como una perso
 Todo pasa en tu ordenador. No usa IA, no sale a la red y no manda nada a ninguna parte.
 
 ```
-npm i -D textoneitor-1.2.0.tgz
+npm i -D textoneitor
 npx textoneitor lint docs README.md
 ```
 
@@ -18,16 +18,14 @@ README.md  índice 34/100
 
 ## Instalación
 
-Todavía no está en npm, así que se instala desde el paquete de la última release o desde el código.
-
-Con el paquete, que es un `.tgz` normal de npm. Lo bajas de la pestaña Releases del repositorio y lo instalas en tu proyecto:
+Está en npm. En tu proyecto:
 
 ```
-npm i -D textoneitor-1.2.0.tgz
+npm i -D textoneitor
 npx textoneitor lint README.md --profile readme
 ```
 
-Vale igual con `pnpm add -D ./textoneitor-1.2.0.tgz` o `yarn add -D ./textoneitor-1.2.0.tgz`. Hace falta Node 20 o más.
+Vale igual con `pnpm add -D textoneitor` o `yarn add -D textoneitor`. Hace falta Node 20 o más. Y si solo quieres probarlo sin instalar nada, `npx textoneitor lint README.md`.
 
 Desde el código, si quieres tocarlo:
 
@@ -39,7 +37,7 @@ pnpm build
 node packages/linter/dist/cli/main.js lint README.md --profile readme
 ```
 
-El plugin de Claude Code, con la guía, va en otro paquete de la misma release, `textoneitor-claude-code-1.2.0.zip`. Lo descomprimes donde quieras y lo cargas así:
+El plugin de Claude Code, con la guía, va aparte, en la pestaña Releases del repositorio: `textoneitor-claude-code-1.2.1.zip`. Lo descomprimes donde quieras y lo cargas así:
 
 ```
 claude --plugin-dir ./textoneitor-claude-code
@@ -47,8 +45,7 @@ claude --plugin-dir ./textoneitor-claude-code
 
 La guía se carga sola al empezar cada sesión, así que puedes seguir usando el estilo de salida y las skills que quieras. Para Codex u otro asistente que lea `AGENTS.md`, está `integrations/agents-md/escribir-en-espanol.md`, que se pega ahí.
 
-Las otras dos formas de engancharlo, pre-commit y GitHub Action, están explicadas en `integrations/pre-commit/README.md` y `integrations/github-action/README.md`. El hook de pre-commit pide la versión publicada en npm, así que hasta que se publique hay que apuntarlo al `.tgz`.
-
+Las otras dos formas de engancharlo, pre-commit y GitHub Action, están explicadas en `integrations/pre-commit/README.md` y `integrations/github-action/README.md`.
 ## La guía
 
 Está en `integrations/claude-code/guia/humano.md` y es un archivo de texto: se lo puedes pegar a cualquier modelo. Si usas Claude Code, el plugin la carga al empezar la sesión y ya escribe así siempre, uses la skill que uses.

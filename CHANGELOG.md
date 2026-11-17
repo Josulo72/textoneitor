@@ -2,6 +2,21 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y las versiones, [SemVer](https://semver.org/lang/es/).
 
+## [1.2.1] - 2026-11-17
+
+La primera versión que se instala desde npm, con `npm i -D textoneitor`. El revisor da los mismos hallazgos que la 1.2.0.
+
+### Cambiado
+
+- El paquete lleva los datos que enseña npm: repositorio, web, dónde abrir una incidencia y palabras clave. Ni la descripción ni la ayuda de la orden lo llaman ya linter.
+- El README, la web y las instrucciones de pre-commit dejan de mandar a descargar el `.tgz` de la release.
+
+### Corregido
+
+- El build fallaba de vez en cuando porque `retorica/triada` tardaba unos 200 ms sobre el texto de prueba de 1 MB, con el límite en 250. Ahora busca desde las comas en vez de recorrer todo el texto y en el build se queda en unos 100 ms. Da los mismos hallazgos, y el Rule Pack no cambia.
+- Las instrucciones de pre-commit y de la GitHub Action apuntaban a `jrollon/textoneitor`, y el repositorio es `Josulo72/textoneitor`. La Action se pedía además con `@v1`, una etiqueta que no hay; ahora con `@v1.2.1`.
+- `pack:check` prueba también lo que hace quien lo instala: `npx textoneitor`, los `import` de `textoneitor` y `textoneitor/web`, y una carpeta con espacios y eñe.
+
 ## [1.2.0] - 2026-09-20
 
 ### Cambiado
