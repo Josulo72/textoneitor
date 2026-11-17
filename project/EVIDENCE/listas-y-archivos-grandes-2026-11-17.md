@@ -31,20 +31,34 @@ Tests nuevos: uno en `test/document.test.ts` (un bloque de 12.000 líneas, 132.0
 
 Los textos de development se han pasado con el perfil por defecto, copiados a una carpeta temporal. Ningún holdout se ha abierto fuera de lo que ya hace `pnpm gates` con el de v1.1, que coincide con `benchmark/reports/holdout-v1.1.json`.
 
+## Avisos de lo que no se analiza (segunda tanda, mismo día)
+
+Dos cosas más de la auditoría, las dos en la orden y sin tocar reglas:
+
+- Un archivo en UTF-16 o un binario con extensión `.md` daba "1 archivo, 0 hallazgos, OK" sin haber leído nada. Ahora `scanProject` se lo salta si el texto leído lleva un carácter nulo, y la orden lo dice por stderr: `textoneitor: 1 archivo(s) sin analizar porque no son texto en UTF-8 (utf16.md)`. Ya no aparece en el informe.
+- Un archivo nombrado a mano que `exclude` o `.gitignore` dejan fuera daba "0 archivos, OK" sin más. Sigue sin ser un error, porque así lo pasa pre-commit, pero ahora se dice por stderr.
+
+La salida no cambia en ninguno de los dos casos, y el JSON y el SARIF no llevan campos nuevos. El JSON de los 222 textos de development es idéntico al de antes salvo los tiempos, y en esa pasada no sale nada por stderr. Test nuevo en `test/cli.e2e.test.ts`.
+
+Un archivo en Latin-1 se sigue analizando como hasta ahora: no lleva nulos y las fórmulas sin tilde se encuentran igual. No se ha tocado.
+
+Durante estas pasadas `pnpm build` falló una vez con `densidad/adverbios-mente: demasiado lenta en texto adversarial: 296 ms > 250 ms`. Cinco `build:rules` seguidos dieron entre 150 y 157 ms y el build siguiente pasó. Es el mismo fallo intermitente por carga de la máquina que ya se vio con `retorica/triada`.
+
 ## Lo que la auditoría encontró y no se ha tocado
 
-- La raya de diálogo ("—¿Vienes? —preguntó ella") sale como raya de inciso en readme, chat y correo.
-- Las citas con `>` se revisan como texto del autor.
-- Un archivo en UTF-16 o un binario con extensión `.md` da 0 hallazgos sin avisar.
+- La raya de diálogo ("—¿Vienes? —preguntó ella") sale como raya de inciso en readme, chat, correo y redes. `formato/raya` es "cualquier raya" por definición y su YAML ya lo apunta como falso positivo. Arreglarlo es cambiar la regla.
+- Los títulos con nombres propios ("Integración con Visual Studio Code") salen como Title Case. También está apuntado en su YAML. Sin una lista de nombres no hay arreglo determinista.
+- Las citas con `>` se revisan como texto del autor, que es lo que dice la arquitectura. En los 222 textos de development no hay ninguna cita, así que no hay datos para decidir.
 - Las fórmulas con imperativo de tú ("sumérgete") no cubren el voseo ni el ustedes.
-- `pack:check`, la web y las integraciones no se han revisado.
+- La web y las integraciones no se han revisado.
 
 ## Salida
 
 ```
 typecheck -> 0
-build -> 0
-test -> 0        (103 del paquete)
+build -> 0       (a la segunda; ver arriba)
+test -> 0        (104 del paquete)
 gates -> 0       (Todos los gates en verde)
 lint:self -> 0   (0 error, 0 warning, 34 info)
+pack:check -> 0  (Empaquetado en verde)
 ```

@@ -48,6 +48,32 @@ describe("CLI E2E: lint", () => {
     expect(json.files[0].findings.length).toBeGreaterThan(0);
   });
 
+  it("avisa por stderr de lo que no analiza, sin cambiar la salida ni el JSON", () => {
+    const dir = tmpProject({ ".gitignore": "ignorado/\n", "ignorado/x.md": AI_TEXT, "ok.md": HUMAN_TEXT, "textoneitor.yml": "fail_on: never\n" });
+    fs.writeFileSync(path.join(dir, "utf16.md"), Buffer.from("Cabe destacar que es importante.", "utf16le"));
+    fs.writeFileSync(path.join(dir, "binario.md"), Buffer.from([0x89, 0x50, 0x4e, 0x47, 0, 0, 0xff, 0xfe]));
+    // Nombrado a mano pero ignorado por .gitignore: no es un error, pero se dice.
+    const ign = cli(["lint", "ignorado/x.md", "--no-cache"], { cwd: dir });
+    expect(ign.status).toBe(0);
+    expect(ign.stderr).toContain("exclude");
+    expect(ign.stderr).toContain("ignorado/x.md");
+    // UTF-16 y binario: se saltan y se nombran; no pasan por analizados con cero hallazgos.
+    const r = cli(["lint", "-f", "json", "--no-cache"], { cwd: dir });
+    expect(r.status).toBe(0);
+    expect(JSON.parse(r.stdout).files.map((f: { path: string }) => f.path)).toEqual(["ok.md"]);
+    expect(r.stderr).toContain("no son texto en UTF-8");
+    expect(r.stderr).toContain("binario.md");
+    expect(r.stderr).toContain("utf16.md");
+    expect(r.stderr).not.toContain("exclude");
+    // Nombrar el archivo ilegible no lo confunde con uno excluido.
+    const u = cli(["lint", "utf16.md", "--no-cache"], { cwd: dir });
+    expect(u.status).toBe(0);
+    expect(u.stderr).toContain("no son texto en UTF-8");
+    expect(u.stderr).not.toContain("exclude");
+    // Con archivos normales no se escribe nada en stderr.
+    expect(cli(["lint", "ok.md", "--no-cache"], { cwd: dir }).stderr).toBe("");
+  });
+
   it("stdin con nombre lógico, CRLF y BOM: mismos hallazgos y posiciones de línea", () => {
     const lf = cli(["lint", "--stdin", "--stdin-filename", "a.md", "-f", "json", "--fail-on", "never"], { input: AI_TEXT });
     const crlf = cli(["lint", "--stdin", "--stdin-filename", "a.md", "-f", "json", "--fail-on", "never"], { input: "﻿" + AI_TEXT.replace(/\n/g, "\r\n") });
