@@ -2,6 +2,17 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y las versiones, [SemVer](https://semver.org/lang/es/).
 
+## [Sin publicar]
+
+### Cambiado
+
+- La GitHub Action se ejecuta con Node 24 (`using: node24`). GitHub tiene Node 20 en retirada y ya la forzaba a Node 24 con un aviso.
+- Los textos de las integraciones lo llaman «el revisor» en vez de «el linter»: los README, el comando `/revisar`, la instrucción para `AGENTS.md` y los mensajes que los hooks le devuelven a Claude.
+
+### Corregido
+
+- El autor de la Action y del plugin figuraba como `jrollon`. Es `Josulo72`, como en el resto.
+
 ## [1.2.1] - 2026-11-17
 
 La primera versión que se instala desde npm, con `npm i -D textoneitor`. El revisor da los mismos hallazgos que la 1.2.0.

@@ -6,7 +6,7 @@ Son tres piezas.
 
 La guía (`guia/humano.md`) se carga sola al empezar cada sesión, con un hook `SessionStart`. Es la pieza principal: le dice a Claude cómo suena el español de una persona normal, en la conversación y en los archivos. Viene encendida.
 
-Los hooks de revisión pasan el linter a lo que Claude acaba de escribir y, si ven señales de texto generado, le devuelven la orientación del linter. Uno mira cada respuesta al terminarla y el otro los archivos de texto que se escriben con `Write` o `Edit`, los escriba la skill que sea. Claude decide qué corrige y qué deja. Los hooks no reescriben nada. Vienen apagados.
+Los hooks de revisión pasan el revisor a lo que Claude acaba de escribir y, si ven señales de texto generado, le devuelven la orientación del revisor. Uno mira cada respuesta al terminarla y el otro los archivos de texto que se escriben con `Write` o `Edit`, los escriba la skill que sea. Claude decide qué corrige y qué deja. Los hooks no reescriben nada. Vienen apagados.
 
 El comando `/revisar` hace lo mismo cuando tú lo pides, con un archivo o con un texto pegado.
 
@@ -38,9 +38,9 @@ Están apagados. Para encenderlos, en `.claude/settings.json` del proyecto o en 
 }
 ```
 
-El de respuestas coge la última respuesta, la pasa por el linter con el perfil `chat` y, si hay algo de nivel warning o error, no deja terminar el turno y le pasa a Claude la orientación (`--format revision`): por cada regla, qué busca, una orientación para reescribir y dónde está cada caso. La respuesta original ya la has visto, y debajo sale la revisada si Claude decide cambiar algo.
+El de respuestas coge la última respuesta, la pasa por el revisor con el perfil `chat` y, si hay algo de nivel warning o error, no deja terminar el turno y le pasa a Claude la orientación (`--format revision`): por cada regla, qué busca, una orientación para reescribir y dónde está cada caso. La respuesta original ya la has visto, y debajo sale la revisada si Claude decide cambiar algo.
 
-El de archivos hace lo mismo con cada archivo que se escribe, pero solo con los tipos de archivo de texto que están en `situaciones.yml` del linter: README, documentación, correos, publicaciones. El perfil sale de la ruta (`--profile auto`): un `README.md` se revisa como README y un `correos/respuesta.md` como correo. Un archivo de código o que no encaja en ninguna situación no se toca. Si tu `textoneitor.yml` tiene overrides por ruta, mandan ellos.
+El de archivos hace lo mismo con cada archivo que se escribe, pero solo con los tipos de archivo de texto que están en `situaciones.yml` del revisor: README, documentación, correos, publicaciones. El perfil sale de la ruta (`--profile auto`): un `README.md` se revisa como README y un `correos/respuesta.md` como correo. Un archivo de código o que no encaja en ninguna situación no se toca. Si tu `textoneitor.yml` tiene overrides por ruta, mandan ellos.
 
 En los dos casos lo que llega es orientación, no órdenes. Un hallazgo se puede aceptar, ignorar o reinterpretar según el contexto, y Claude lo decide.
 

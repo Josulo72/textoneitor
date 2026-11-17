@@ -42,7 +42,7 @@ Los umbrales y las reglas salen de `textoneitor.yml`. El hook no los cambia.
 
 ## Qué archivos analiza
 
-Por defecto, los Markdown y los de texto que entren en el commit. Para acotarlo tienes `files` y `exclude` en el `.pre-commit-config.yaml`, y la configuración del linter también tiene su propio `exclude`, así que se aplican las dos cosas.
+Por defecto, los Markdown y los de texto que entren en el commit. Para acotarlo tienes `files` y `exclude` en el `.pre-commit-config.yaml`, y la configuración del revisor también tiene su propio `exclude`, así que se aplican las dos cosas.
 
 ## Si falla y quieres commitear igual
 

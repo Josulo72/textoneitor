@@ -50,5 +50,5 @@ if (!r.hallazgos.length) {
 }
 
 guardarIntentos(payload, clave, n + 1);
-process.stderr.write(mensaje(`El linter ha visto señales de texto generado en ${rel}, que acabas de escribir:`, r.cuerpo));
+process.stderr.write(mensaje(`El revisor ha visto señales de texto generado en ${rel}, que acabas de escribir:`, r.cuerpo));
 process.exit(2);
