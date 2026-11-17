@@ -14,5 +14,9 @@
     "escritura",
     "revisor",
     "estilo"
-  ]
+  ],
+  "documentationUrl": "https://github.com/Josulo72/textoneitor/blob/main/integrations/directory/plugin/README.md",
+  "supportUrl": "https://github.com/Josulo72/textoneitor/issues",
+  "privacyPolicyUrl": "https://github.com/Josulo72/textoneitor/blob/main/PRIVACY.md",
+  "termsOfServiceUrl": "https://github.com/Josulo72/textoneitor/blob/main/LICENSE"
 }
