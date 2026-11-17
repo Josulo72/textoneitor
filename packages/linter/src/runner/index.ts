@@ -107,6 +107,8 @@ export interface ScanOptions {
   noCache?: boolean;
   /** Ruta de baseline (anula la configuración). */
   baseline?: string | null;
+  /** Se llama con cada archivo que no se analiza porque no es texto (binario o UTF-16). */
+  onUnreadable?: (relPath: string) => void;
 }
 
 export function scanProject(ctx: RunnerContext, opts: ScanOptions = {}): ScanResult {
@@ -117,6 +119,11 @@ export function scanProject(ctx: RunnerContext, opts: ScanOptions = {}): ScanRes
   for (const abs of files) {
     const rel = path.relative(ctx.root, abs).replace(/\\/g, "/");
     const content = fs.readFileSync(abs, "utf8");
+    // Un carácter nulo delata un binario o un UTF-16 leído como UTF-8: analizarlo daría «0 hallazgos» sin haber leído nada.
+    if (content.includes("\0")) {
+      opts.onUnreadable?.(rel);
+      continue;
+    }
     let result: FileResult | null = null;
     let key = "";
     if (useCache) {

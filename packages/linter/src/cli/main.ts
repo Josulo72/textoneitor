@@ -64,6 +64,11 @@ function rutasDesde(cwd: string, root: string, rutas: string[]): string[] {
   return rutas.map((r) => (fs.existsSync(path.resolve(cwd, r)) ? path.resolve(cwd, r) : `${prefijo}/${r.replace(/\\/g, "/")}`));
 }
 
+/** Hasta cinco rutas, para los avisos de stderr. */
+function lista(rutas: string[]): string {
+  return `${rutas.slice(0, 5).join(", ")}${rutas.length > 5 ? ", …" : ""}`;
+}
+
 function readStdin(): string {
   return fs.readFileSync(0, "utf8");
 }
@@ -141,11 +146,27 @@ program
       };
     } else {
       const baseline = o.baseline === false ? null : typeof o.baseline === "string" ? o.baseline : undefined;
-      result = scanProject(ctx, { targets: rutasDesde(ctx.cwd, ctx.root, rutas), noCache: o.cache === false, baseline });
+      const ilegibles: string[] = [];
+      result = scanProject(ctx, { targets: rutasDesde(ctx.cwd, ctx.root, rutas), noCache: o.cache === false, baseline, onUnreadable: (p) => ilegibles.push(p) });
       // Si las rutas existen pero `exclude` o .gitignore las dejan fuera (pre-commit con un CHANGELOG), no hay nada que analizar
       // y no es un error. Solo es un error de uso que ninguna ruta exista ni coincida con nada.
       if (rutas.length && result.files.length === 0 && !rutas.some((r) => fs.existsSync(path.resolve(ctx.cwd, r)))) {
         die(`ninguna ruta coincide: ${rutas.join(", ")}`);
+      }
+      // Lo que no se analiza se dice, por stderr y sin cambiar la salida ni el informe.
+      if (ilegibles.length) {
+        process.stderr.write(`textoneitor: ${ilegibles.length} archivo(s) sin analizar porque no son texto en UTF-8 (${lista(ilegibles)})\n`);
+      }
+      const analizados = new Set(result.files.map((f) => f.path));
+      const excluidos = rutas
+        .filter((r) => {
+          const abs = path.resolve(ctx.cwd, r);
+          return fs.existsSync(abs) && fs.statSync(abs).isFile();
+        })
+        .map((r) => path.relative(ctx.root, path.resolve(ctx.cwd, r)).replace(/\\/g, "/"))
+        .filter((rel) => !analizados.has(rel) && !ilegibles.includes(rel));
+      if (excluidos.length) {
+        process.stderr.write(`textoneitor: ${excluidos.length} archivo(s) sin analizar porque \`exclude\` o .gitignore los dejan fuera (${lista(excluidos)})\n`);
       }
       // Con `auto`, igual que con --stdin: lo que no corresponde a ninguna situación no se analiza.
       if (situaciones) {

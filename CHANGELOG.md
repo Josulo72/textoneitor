@@ -4,6 +4,10 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ## [Sin publicar]
 
+### Añadido
+
+- La orden avisa por stderr cuando un archivo nombrado a mano se queda fuera por `exclude` o por `.gitignore`. Sigue sin ser un error.
+
 ### Cambiado
 
 - La GitHub Action se ejecuta con Node 24 (`using: node24`). GitHub tiene Node 20 en retirada y ya la forzaba a Node 24 con un aviso.
@@ -11,6 +15,10 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ### Corregido
 
+- Las celdas de una tabla ya no cuentan como frases seguidas ni como párrafos que empiezan igual. Una tabla de resultados con celdas como "6 de 6" hacía saltar `repeticion/anafora` y `repeticion/inicio-parrafo`. El resto de reglas sigue revisando las celdas.
+- Con las listas pasaba lo mismo: un listado de cambios con "Se añade…" en tres elementos seguidos daba aviso de anáfora. Ahora un elemento de lista no cuenta como párrafo y las frases no se encadenan de un elemento a otro.
+- Un archivo de texto grande sin líneas en blanco (a partir de unos 700 KB) tiraba la orden con `Maximum call stack size exceeded`. Ya se analiza.
+- Un archivo en UTF-16 o un binario con extensión de texto ya no pasa por analizado con cero hallazgos: se salta y la orden lo dice por stderr.
 - El autor de la Action y del plugin figuraba como `jrollon`. Es `Josulo72`, como en el resto.
 
 ## [1.2.1] - 2026-11-17
