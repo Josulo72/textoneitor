@@ -46,6 +46,16 @@ claude --plugin-dir ./textoneitor-claude-code
 La guía se carga sola al empezar cada sesión, así que puedes seguir usando el estilo de salida y las skills que quieras. Para Codex u otro asistente que lea `AGENTS.md`, está `integrations/agents-md/escribir-en-espanol.md`, que se pega ahí.
 
 Las otras dos formas de engancharlo, pre-commit y GitHub Action, están explicadas en `integrations/pre-commit/README.md` y `integrations/github-action/README.md`.
+## Con qué IA funciona
+
+La guía y el revisor valen para cualquiera. Lo que cambia es cuánto se hace solo.
+
+- Claude Code: todo. El plugin carga la guía al empezar la sesión y, si enciendes los hooks, revisa cada respuesta y cada archivo de texto antes de que los leas y le devuelve a Claude lo que ha visto para que lo corrija. Los hooks vienen apagados; se encienden con `IA_LINTER_REVISAR=1` y `IA_LINTER_REVISAR_ARCHIVOS=1`, como cuenta `integrations/claude-code/README.md`.
+- Codex y los asistentes que leen un `AGENTS.md`: pegas `integrations/agents-md/escribir-en-espanol.md`, que lleva la guía y la instrucción de pasar el revisor después de escribir. Depende de que el asistente haga caso.
+- ChatGPT, Gemini, Claude.ai o cualquier chat de navegador: pegas la guía al principio de la conversación o en las instrucciones personalizadas. Ahí no hay forma de enganchar el revisor, así que la segunda pasada la haces tú con `npx textoneitor lint --stdin --profile chat`.
+
+La guía está medida con Claude y con GPT-5.6 Sol. Con otros modelos no la he probado.
+
 ## La guía
 
 Está en `integrations/claude-code/guia/humano.md` y es un archivo de texto: se lo puedes pegar a cualquier modelo. Si usas Claude Code, el plugin la carga al empezar la sesión y ya escribe así siempre, uses la skill que uses.
