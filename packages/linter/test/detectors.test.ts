@@ -76,6 +76,26 @@ describe("repetition", () => {
     expect(f.length).toBeGreaterThanOrEqual(1);
     expect(f[0]!.message).toContain("gestión del cambio");
   });
+  it("las celdas de tabla no cuentan como frases ni como párrafos repetidos", () => {
+    const tabla = "| Umbral | Aciertos | Trampas |\n|---|---|---|\n| 0,82 | 29 de 30 | 6 de 6 |\n| 0,84 | 29 de 30 | 6 de 6 |\n| 0,85 | 29 de 30 | 6 de 6 |\n| 0,88 | 29 de 30 | 6 de 6 |\n";
+    const frases = rule("repetition", { unit: "sentence_start", n: 2, min_repeats: 3 });
+    const parrafos = rule("repetition", { unit: "block_start", n: 2, min_repeats: 3, consecutive: false });
+    expect(run(tabla, frases, "markdown")).toHaveLength(0);
+    expect(run(tabla, parrafos, "markdown")).toHaveLength(0);
+    // Fuera de la tabla sigue funcionando igual.
+    const prosa = "Nuestro producto es rápido.\n\nNuestro producto es barato.\n\nNuestro producto es fiable.\n\n" + tabla;
+    expect(run(prosa, parrafos, "markdown")).toHaveLength(1);
+    expect(run("Es hora de actuar. Es hora de cambiar. Es hora de vivir.\n\n" + tabla, frases, "markdown")).toHaveLength(1);
+  });
+  it("una tabla corta la racha entre el texto de antes y el de después", () => {
+    const r = rule("repetition", { unit: "sentence_start", n: 2, min_repeats: 3 });
+    const text = "Es hora de actuar. Es hora de cambiar.\n\n| a | b |\n|---|---|\n| uno | dos |\n\nEs hora de vivir.";
+    expect(run(text, r, "markdown")).toHaveLength(0);
+  });
+  it("las celdas de tabla se siguen revisando con las demás reglas", () => {
+    const text = "| Punto | Nota |\n|---|---|\n| Uno | Sumérgete en el tema |\n";
+    expect(run(text, rule("lexicon", { terms: ["sumérgete"] }), "markdown")).toHaveLength(1);
+  });
 });
 
 describe("structure", () => {

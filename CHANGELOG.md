@@ -11,6 +11,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ### Corregido
 
+- Las celdas de una tabla ya no cuentan como frases seguidas ni como párrafos que empiezan igual. Una tabla de resultados con celdas como "6 de 6" hacía saltar `repeticion/anafora` y `repeticion/inicio-parrafo`. El resto de reglas sigue revisando las celdas.
 - El autor de la Action y del plugin figuraba como `jrollon`. Es `Josulo72`, como en el resto.
 
 ## [1.2.1] - 2026-11-17
