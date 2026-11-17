@@ -2,16 +2,16 @@
   "name": "textoneitor",
   "displayName": "textoneitor",
   "version": "1.2.1",
-  "description": "Escribe en español como una persona y revisa lo que ya está escrito, con cualquier skill y cualquier estilo de salida. Carga la guía al empezar la sesión, trae el comando /revisar y dos hooks opcionales que pasan el linter a las respuestas y a los archivos de texto y le devuelven la orientación a Claude.",
+  "description": "Escribe en español como una persona y revisa lo que ya está escrito, con cualquier skill y cualquier estilo de salida. Carga la guía al empezar la sesión, trae el comando /revisar y dos hooks opcionales que pasan el revisor a las respuestas y a los archivos de texto y le devuelven la orientación a Claude.",
   "author": {
-    "name": "jrollon"
+    "name": "Josulo72"
   },
   "repository": "https://github.com/Josulo72/textoneitor",
   "license": "BUSL-1.1",
   "keywords": [
     "español",
     "escritura",
-    "linter",
+    "revisor",
     "estilo"
   ]
 }

@@ -26,7 +26,7 @@ export function generar() {
     "",
     "## Después de escribir",
     "",
-    "Cuando escribas un archivo de texto para que lo lea una persona (un README, un correo, una publicación), pásale el linter:",
+    "Cuando escribas un archivo de texto para que lo lea una persona (un README, un correo, una publicación), pásale el revisor:",
     "",
     "```",
     "npx textoneitor lint <archivo> --profile auto --format revision",

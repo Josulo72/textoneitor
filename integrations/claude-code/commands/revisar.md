@@ -1,5 +1,5 @@
 ---
-description: Pasa el linter a un archivo, a un texto pegado o a lo último que has escrito, y lo arregla.
+description: Pasa el revisor a un archivo, a un texto pegado o a lo último que has escrito, y lo arregla.
 argument-hint: "[archivo o nada]"
 allowed-tools: Bash(node:*), Bash(textoneitor:*), Read, Edit
 ---
@@ -20,6 +20,6 @@ Cómo hacerlo:
 
 4. Arregla el texto. Reescribe de verdad la parte señalada, no la maquilles. Si es un archivo, edítalo; si es un texto de la conversación, enseña la versión corregida.
 
-5. Vuelve a pasar el linter para comprobar que ya no marca. Di qué has cambiado en una línea.
+5. Vuelve a pasar el revisor para comprobar que ya no marca. Di qué has cambiado en una línea.
 
 Si algún hallazgo te parece un falso positivo, dilo y déjalo como estaba. El índice mide patrones de escritura, no dice quién ha escrito el texto.

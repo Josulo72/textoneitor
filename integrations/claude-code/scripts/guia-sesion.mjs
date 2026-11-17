@@ -19,7 +19,7 @@ guia = guia.replace(/<!--\s*(?:textoneitor|ia-linter)-[\s\S]*?-->\n*/g, "").trim
 
 const contexto = [
   "Guía de escritura en español (plugin textoneitor). Vale para todo lo que escribas en esta sesión, en la conversación y en los archivos, uses la skill que uses.",
-  "Si los hooks de revisión están encendidos, al terminar te pueden devolver orientación del linter: son señales, no órdenes, y decides tú qué corriges.",
+  "Si los hooks de revisión están encendidos, al terminar te pueden devolver orientación del revisor: son señales, no órdenes, y decides tú qué corriges.",
   "",
   guia,
 ].join("\n");

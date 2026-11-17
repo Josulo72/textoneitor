@@ -1,6 +1,6 @@
 name: textoneitor
 description: Analiza el español del repositorio y anota los hallazgos en el pull request. Mide patrones editoriales, no autoría.
-author: jrollon
+author: Josulo72
 branding:
   icon: edit-3
   color: gray
@@ -60,5 +60,5 @@ outputs:
     description: true si la política se cumple.
 
 runs:
-  using: node20
+  using: node24
   main: main.mjs

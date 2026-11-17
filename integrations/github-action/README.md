@@ -1,6 +1,6 @@
 # GitHub Action
 
-Pasa el linter a los textos del repositorio y deja los hallazgos anotados en el pull request, en la línea donde están.
+Pasa el revisor a los textos del repositorio y deja los hallazgos anotados en el pull request, en la línea donde están.
 
 ## Uso
 
@@ -23,7 +23,7 @@ jobs:
           profile: readme
 ```
 
-El paso `npm i -D textoneitor` no sobra: la Action usa el `textoneitor` que tenga el proyecto, y así la versión del linter la fija tu `package.json`. La copia que lleva la Action dentro (`bundle/`) es un artefacto del build, no está en el repositorio, y solo existe si usas una release empaquetada. Si no hay ninguna de las dos, la Action falla diciéndotelo.
+El paso `npm i -D textoneitor` no sobra: la Action usa el `textoneitor` que tenga el proyecto, y así la versión del revisor la fija tu `package.json`. La copia que lleva la Action dentro (`bundle/`) es un artefacto del build, no está en el repositorio, y solo existe si usas una release empaquetada. Si no hay ninguna de las dos, la Action falla diciéndotelo.
 
 ## Entradas
 
@@ -46,10 +46,10 @@ El paso `npm i -D textoneitor` no sobra: la Action usa el `textoneitor` que teng
 
 ```yaml
       - uses: Josulo72/textoneitor/integrations/github-action@v1.2.1
-        id: linter
+        id: textoneitor
         with:
           fail-on: never
-      - run: echo "Índice más alto: ${{ steps.linter.outputs.max-index }}"
+      - run: echo "Índice más alto: ${{ steps.textoneitor.outputs.max-index }}"
 ```
 
 ## Con SARIF, para que salga en la pestaña de seguridad
