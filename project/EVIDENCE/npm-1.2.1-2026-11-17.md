@@ -48,8 +48,16 @@ Ejecución desde la instalación
 
 En `dist-release/` (no va al repositorio) quedan `textoneitor-1.2.1.tgz` y `textoneitor-claude-code-1.2.1.zip` para la release.
 
+## Después de publicar
+
+Publicado por el propietario el mismo día. El registro tardó unos cinco minutos en servir la versión y el archivo.
+
+- `npm view textoneitor`: versión 1.2.1, `latest`, shasum `4126953084372bf15be641bc2da54adc41ee17a3`, el mismo que imprimió `npm publish`.
+- En una carpeta limpia con espacios y eñe, `npm i -D textoneitor` instala la 1.2.1 desde el registro. `npx textoneitor --version` da 1.2.1, `rules list` da 38 reglas, los `import` de `textoneitor` y `textoneitor/web` dan el mismo índice (82) y `lint -f json` sobre `examples/muestra-ia.md` da el mismo JSON byte a byte que el repositorio. `npx textoneitor@1.2.1 lint` sin instalar antes también funciona.
+- CI del pull request 2 y de `main` (aaaef11) en verde en Ubuntu, Windows y macOS con Node 20, 22 y 24, después de poner el build delante del typecheck en `ci.yml`.
+- Etiqueta `v1.2.1` y release en GitHub con el `.tgz` bajado del registro y el zip del plugin.
+
 ## Lo que no está comprobado
 
-- La instalación desde el registro, porque no está publicado.
-- El CI en Ubuntu y macOS con estos cambios, porque no se ha hecho push.
+- El hook de pre-commit y la GitHub Action contra el paquete de npm.
 - `densidad/adverbios-mente` sigue a unos 160 ms de 250. No ha fallado, pero es la que menos margen tiene.
