@@ -92,6 +92,22 @@ describe("repetition", () => {
     const text = "Es hora de actuar. Es hora de cambiar.\n\n| a | b |\n|---|---|\n| uno | dos |\n\nEs hora de vivir.";
     expect(run(text, r, "markdown")).toHaveLength(0);
   });
+  it("los elementos de una lista no cuentan como párrafos ni encadenan frases entre sí", () => {
+    const cambios = "### Añadido\n\n- Se añade la opción nueva.\n- Se añade soporte para Windows.\n- Se añade la exportación a CSV.\n- Se añade la lectura de PDF.\n";
+    const pasos = "1. Abre la terminal en la carpeta.\n2. Abre la configuración y cópiala.\n3. Abre la aplicación en el navegador.\n";
+    const frases = rule("repetition", { unit: "sentence_start", n: 2, min_repeats: 3 });
+    const parrafos = rule("repetition", { unit: "block_start", n: 2, min_repeats: 3, consecutive: false });
+    for (const text of [cambios, pasos]) {
+      expect(run(text, frases, "markdown")).toHaveLength(0);
+      expect(run(text, parrafos, "markdown")).toHaveLength(0);
+    }
+    // Dentro de un mismo elemento sí es anáfora.
+    expect(run("- Es hora de actuar. Es hora de cambiar. Es hora de vivir.\n- Otra cosa.\n", frases, "markdown")).toHaveLength(1);
+    // El párrafo de antes de la lista no se encadena con el primer elemento.
+    expect(run("Es hora de actuar. Es hora de cambiar.\n\n- Es hora de vivir.\n", frases, "markdown")).toHaveLength(0);
+    // Entre párrafos normales sigue contando igual que antes.
+    expect(run("Es hora de actuar.\n\nEs hora de cambiar.\n\nEs hora de vivir.", frases, "markdown")).toHaveLength(1);
+  });
   it("las celdas de tabla se siguen revisando con las demás reglas", () => {
     const text = "| Punto | Nota |\n|---|---|\n| Uno | Sumérgete en el tema |\n";
     expect(run(text, rule("lexicon", { terms: ["sumérgete"] }), "markdown")).toHaveLength(1);

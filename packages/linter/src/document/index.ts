@@ -51,10 +51,12 @@ export function buildDocument(
   let eligibleWords = 0;
   for (let i = 0; i < blocks.length; i++) {
     const b = blocks[i] as TextBlock;
-    sentences.push(...splitSentences(b, i));
-    const t = tokenizeBlock(b, i);
-    for (const tk of t) if (tk.isWord) eligibleWords++;
-    tokens.push(...t);
+    // Sin `push(...x)`: un bloque de más de cien mil tokens (un .txt grande sin líneas en blanco) desborda la pila.
+    for (const s of splitSentences(b, i)) sentences.push(s);
+    for (const tk of tokenizeBlock(b, i)) {
+      if (tk.isWord) eligibleWords++;
+      tokens.push(tk);
+    }
   }
   return {
     path: opts.path ?? null,

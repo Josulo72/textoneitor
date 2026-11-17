@@ -234,8 +234,12 @@ const repetition: Detector = (rule, doc) => {
   // sentence_start / block_start
   // Una celda de tabla no es una frase ni un párrafo: celdas del mismo formato («6 de 6») no son anáfora.
   // En sentence_start la celda deja una unidad vacía para que corte la racha entre el texto de antes y el de después.
+  // Con las listas pasa parecido: «Se añade…» en tres elementos seguidos de un listado de cambios es formato, no anáfora.
+  // Un elemento de lista no cuenta como párrafo, y una racha de frases no pasa de un elemento a otro
+  // (dentro de un mismo elemento sí cuenta). Las listas de arranque uniforme son cosa de `list_uniform_start`.
   const units: { blockIndex: number; start: number; end: number; key: string }[] = [];
   const isCell = (bi: number) => (doc.blocks[bi] as TextBlock).kind === "table_cell";
+  const isItem = (bi: number) => (doc.blocks[bi] as TextBlock).kind === "list_item";
   if (p.unit === "sentence_start") {
     for (const s of doc.sentences) {
       if (isCell(s.blockIndex)) {
@@ -248,7 +252,7 @@ const repetition: Detector = (rule, doc) => {
     }
   } else {
     doc.blocks.forEach((b, bi) => {
-      if (isCell(bi)) return;
+      if (isCell(bi) || isItem(bi)) return;
       const words = (b.text.match(/[\p{L}\p{M}\p{N}]+/gu) ?? []).slice(0, p.n).map((w) => w.toLowerCase());
       if (words.length < p.n) return;
       units.push({ blockIndex: bi, start: 0, end: Math.min(b.text.length, 80), key: words.join(" ") });
@@ -264,7 +268,9 @@ const repetition: Detector = (rule, doc) => {
       run = [];
     };
     for (const u of units) {
-      if (u.key && run.length && run[run.length - 1]!.key === u.key) run.push(u);
+      const prev = run[run.length - 1];
+      const otherItem = prev !== undefined && prev.blockIndex !== u.blockIndex && (isItem(prev.blockIndex) || isItem(u.blockIndex));
+      if (u.key && prev !== undefined && prev.key === u.key && !otherItem) run.push(u);
       else {
         flush();
         run = [u];

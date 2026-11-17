@@ -72,6 +72,14 @@ describe("buildDocument texto plano", () => {
     const last = doc.blocks[1]!;
     expect(offsetToLineColumn(orig, doc.lineStarts, last.map[0]!)).toEqual({ line: 3, column: 1 });
   });
+  it("aguanta un bloque enorme sin líneas en blanco", () => {
+    // 12.000 líneas seguidas son un solo bloque de más de cien mil tokens: antes desbordaba la pila.
+    const text = Array.from({ length: 12000 }, () => "una línea normal de texto con once palabras más o menos.").join("\n");
+    const doc = buildDocument(text, { format: "text" });
+    expect(doc.blocks).toHaveLength(1);
+    expect(doc.sentences).toHaveLength(12000);
+    expect(doc.eligibleWords).toBe(132000);
+  });
 });
 
 describe("buildDocument markdown", () => {
