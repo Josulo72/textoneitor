@@ -10,7 +10,7 @@ import { evaluateAdjudicatedPrecision } from "./gate-adjudication.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const policy = parseYaml(fs.readFileSync(path.join(root, "quality-policy.yml"), "utf8"));
-const only = (process.argv.find((a) => a.startsWith("--only=")) ?? "--only=imports,rules,perf,index,situaciones,agents-md").slice(7).split(",");
+const only = (process.argv.find((a) => a.startsWith("--only=")) ?? "--only=imports,rules,perf,index,situaciones,agents-md,directory").slice(7).split(",");
 const failures = [];
 const ok = (msg) => console.log(`  ✔ ${msg}`);
 const fail = (msg) => {
@@ -236,6 +236,15 @@ if (only.includes("agents-md")) {
   const actual = fs.existsSync(SALIDA) ? fs.readFileSync(SALIDA, "utf8").replace(/\r\n/g, "\n") : "";
   if (actual !== generar()) fail("integrations/agents-md/escribir-en-espanol.md no está al día con la guía: node integrations/agents-md/build.mjs");
   else ok("escribir-en-espanol.md coincide con lo que genera la guía");
+}
+
+/* ---------------- Gate: directory (la skill del plugin del directorio está al día con la guía) ---------------- */
+if (only.includes("directory")) {
+  console.log("Gate directory");
+  const { generar, SALIDA } = await import(pathToFileURL(path.join(root, "integrations", "directory", "build.mjs")).href);
+  const actual = fs.existsSync(SALIDA) ? fs.readFileSync(SALIDA, "utf8").replace(/\r\n/g, "\n") : "";
+  if (actual !== generar()) fail("integrations/directory/plugin/skills/escribir-en-espanol/SKILL.md no está al día con la guía: node integrations/directory/build.mjs");
+  else ok("SKILL.md del plugin del directorio coincide con lo que genera la guía");
 }
 
 console.log(failures.length ? `\n${failures.length} gate(s) fallido(s)` : "\nTodos los gates en verde");
