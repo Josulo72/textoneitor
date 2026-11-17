@@ -44,7 +44,8 @@ try {
   }
 
   console.log("Instalación en un directorio limpio");
-  const proyecto = path.join(tmp, "proyecto");
+  // Con espacios y eñe a propósito: es donde fallan las rutas mal citadas.
+  const proyecto = path.join(tmp, "proyecto con eñe");
   fs.mkdirSync(proyecto, { recursive: true });
   fs.writeFileSync(path.join(proyecto, "package.json"), JSON.stringify({ name: "prueba-instalacion", private: true, version: "1.0.0" }, null, 2), "utf8");
   const install = sh("npm", ["install", "--no-audit", "--no-fund", "--loglevel", "error", path.join(tmp, tgz)], { cwd: proyecto });
@@ -63,6 +64,35 @@ try {
   const version = sh(process.execPath, [bin, "--version"], { cwd: proyecto, shell: false });
   if (version.status !== 0 || !/^\d+\.\d+\.\d+/.test(version.stdout.trim())) fail("la CLI instalada no responde a --version");
   else ok(`textoneitor ${version.stdout.trim()}`);
+
+  // Lo que teclea quien lo instala: la orden del bin, no `node dist/cli/main.js`.
+  const versionPkg = JSON.parse(fs.readFileSync(path.join(pkgDir, "package.json"), "utf8")).version;
+  const npx = sh("npx", ["--no-install", "textoneitor", "--version"], { cwd: proyecto });
+  if (npx.status !== 0 || npx.stdout.trim() !== versionPkg) fail(`npx textoneitor --version no devuelve ${versionPkg}: ${(npx.stderr || npx.stdout).trim().split("\n").slice(-2).join(" ")}`);
+  else ok("npx textoneitor responde con la versión del paquete");
+  const npxLint = sh("npx", ["--no-install", "textoneitor", "lint", "muestra.md", "--fail-on", "never"], { cwd: proyecto });
+  if (npxLint.status !== 0 || !/índice \d+\/100/.test(npxLint.stdout)) fail(`npx textoneitor lint falla: ${(npxLint.stderr || npxLint.stdout).trim().split("\n").slice(-2).join(" ")}`);
+  else ok("npx textoneitor lint analiza un archivo");
+
+  // Las tres entradas que declara `exports`.
+  const prueba = path.join(proyecto, "prueba-import.mjs");
+  fs.writeFileSync(prueba, [
+    'import { readFileSync } from "node:fs";',
+    'import { createRequire } from "node:module";',
+    'import { lintText, toolVersion } from "textoneitor";',
+    'import { lintOnce } from "textoneitor/web";',
+    'const pack = JSON.parse(readFileSync(createRequire(import.meta.url).resolve("textoneitor/rulepack.json"), "utf8"));',
+    'const texto = readFileSync("muestra.md", "utf8");',
+    'const api = lintText(texto, { config: { profile: "general" }, format: "markdown" });',
+    'const web = lintOnce(texto, { pack, profile: "general", format: "markdown" });',
+    'console.log(JSON.stringify({ version: toolVersion(), api: api.score.index, web: web.score.index, hallazgos: api.findings.length }));',
+  ].join("\n"), "utf8");
+  const imp = sh(process.execPath, [prueba], { cwd: proyecto, shell: false });
+  let datos = null;
+  try { datos = JSON.parse(imp.stdout); } catch { /* se informa abajo */ }
+  if (imp.status !== 0 || !datos) fail(`import de textoneitor falla: ${(imp.stderr || imp.stdout).trim().split("\n").slice(-3).join(" ")}`);
+  else if (datos.version !== versionPkg || datos.api !== datos.web || datos.hallazgos === 0) fail(`la API y el motor web no cuadran: ${imp.stdout.trim()}`);
+  else ok(`import de "textoneitor", "textoneitor/web" y el Rule Pack: mismo índice (${datos.api}) por los dos caminos`);
 
   const reglas = sh(process.execPath, [bin, "rules", "list", "--json"], { cwd: proyecto, shell: false });
   if (reglas.status !== 0) fail("rules list falla en la instalación");

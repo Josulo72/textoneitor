@@ -89,6 +89,19 @@ describe("structure", () => {
     expect(run("Una solución innovadora, escalable y sostenible.", r)).toHaveLength(1);
     expect(run("Vinieron Juan, Pedro y María.", r)).toHaveLength(0);
   });
+  it("la tríada se busca desde las comas y da los mismos fragmentos que la expresión completa", () => {
+    const r = rule("structure", { kind: "triad" });
+    const text = "Era un plan (ambicioso, costoso y arriesgado), dijo. Y además claro, conciso y directo, rápido y cómodo.";
+    const f = run(text, r);
+    expect(f.map((x) => text.slice(x.range.start.offset, x.range.end.offset))).toEqual(["ambicioso, costoso y arriesgado", "claro, conciso y directo"]);
+    // La palabra que cierra una tríada no abre la siguiente, y las de menos de cuatro letras no cuentan.
+    expect(run("Algo sencillo, directo y honesto, cercano y sincero.", r)).toHaveLength(1);
+    expect(run("Un día gris, frío y oscuro.", r)).toHaveLength(0);
+    // Letras fuera del plano básico (dos unidades UTF-16 cada una) y coma sin espacio detrás.
+    expect(run("Un tono 𝒶claro, 𝒶conciso y 𝒶directo.", r)).toHaveLength(1);
+    expect(run("Un tono 𝒶𝒷o, 𝒶conciso y 𝒶directo.", r)).toHaveLength(0);
+    expect(run("claro,conciso y directo", r)).toHaveLength(0);
+  });
   it("encabezado con dos puntos y title case", () => {
     const md = "# Guía completa: todo lo que necesitas\n\n# Cómo Elegir Tu Mejor Estrategia Digital\n\n# CLI\n";
     expect(run(md, rule("structure", { kind: "heading_colon" }), "markdown")).toHaveLength(1);

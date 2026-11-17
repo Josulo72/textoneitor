@@ -297,12 +297,11 @@ const structure: Detector = (rule, doc) => {
   switch (p.kind) {
     case "triad": {
       // "X, Y y Z" con tres palabras plenas de la misma clase aparente (misma terminación o todas no-stopword).
-      const re = /(?<![\p{L}\p{M}])([\p{L}\p{M}]{4,}),\s+([\p{L}\p{M}]{4,})\s+(?:y|e|o|u)\s+([\p{L}\p{M}]{4,})(?![\p{L}\p{M}])/gu;
       const minPer = (p.min_per_document as number | undefined) ?? 1;
       const found: RawMatch[] = [];
       doc.blocks.forEach((b, bi) => {
-        for (const m of execAll(re, b.text)) {
-          const ws = [m.match[1]!, m.match[2]!, m.match[3]!];
+        for (const m of triadCandidates(b.text)) {
+          const ws = m.words;
           if (ws.some((w) => STOPWORDS.has(w.toLowerCase()))) continue;
           if (ws.some((w) => /^\p{Lu}/u.test(w))) continue; // nombres propios
           if (!sameClass(ws)) continue;
@@ -312,7 +311,7 @@ const structure: Detector = (rule, doc) => {
           const before = b.text.slice(0, m.index);
           if (/\p{L}{3,},\s*$/u.test(before)) continue;
           if (isExcepted(rule, b.text, m.index, m.index + m.length)) continue;
-          found.push({ blockIndex: bi, start: m.index, end: m.index + m.length, data: { term: m.match[0] } });
+          found.push({ blockIndex: bi, start: m.index, end: m.index + m.length, data: { term: b.text.slice(m.index, m.index + m.length) } });
         }
       });
       if (found.length >= minPer) out.push(...found);
@@ -448,6 +447,45 @@ const structure: Detector = (rule, doc) => {
       return out;
   }
 };
+
+const TRIAD_TAIL = /,\s+([\p{L}\p{M}]{4,})\s+(?:y|e|o|u)\s+([\p{L}\p{M}]{4,})(?![\p{L}\p{M}])/uy;
+const LETTER = /[\p{L}\p{M}]/u;
+
+/**
+ * Candidatas a tríada, «X, Y y Z» con tres palabras de cuatro letras o más. Da lo mismo que recorrer el texto con
+ * /(?<![\p{L}\p{M}])([\p{L}\p{M}]{4,}),\s+([\p{L}\p{M}]{4,})\s+(?:y|e|o|u)\s+([\p{L}\p{M}]{4,})(?![\p{L}\p{M}])/gu,
+ * pero solo mira alrededor de las comas, que es mucho más barato en textos largos.
+ */
+function triadCandidates(text: string): { index: number; length: number; words: string[] }[] {
+  const out: { index: number; length: number; words: string[] }[] = [];
+  let lastEnd = 0;
+  let c = -1;
+  while ((c = text.indexOf(",", c + 1)) !== -1) {
+    TRIAD_TAIL.lastIndex = c;
+    const m = TRIAD_TAIL.exec(text);
+    if (!m) continue;
+    // Inicio de la palabra que precede a la coma, retrocediendo por puntos de código.
+    let s = c;
+    while (s > 0) {
+      let k = s - 1;
+      const lo = text.charCodeAt(k);
+      if (lo >= 0xdc00 && lo <= 0xdfff && k > 0) {
+        const hi = text.charCodeAt(k - 1);
+        if (hi >= 0xd800 && hi <= 0xdbff) k--;
+      }
+      if (!LETTER.test(text.slice(k, s))) break;
+      s = k;
+    }
+    if (s < lastEnd) continue; // esa palabra ya cerraba la candidata anterior
+    const first = text.slice(s, c);
+    if ([...first].length < 4) continue;
+    const end = c + m[0].length;
+    out.push({ index: s, length: end - s, words: [first, m[1]!, m[2]!] });
+    lastEnd = end;
+    c = end - 1;
+  }
+  return out;
+}
 
 function sameClass(ws: string[]): boolean {
   const suf = (w: string) => {

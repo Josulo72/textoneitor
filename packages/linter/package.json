@@ -1,8 +1,32 @@
 {
   "name": "textoneitor",
-  "version": "1.2.0",
-  "description": "Linter determinista de patrones de escritura de IA en español (texto y Markdown).",
+  "version": "1.2.1",
+  "description": "Revisor de textos en español: marca lo que suena a máquina (muletillas, rayas de inciso, tríadas, frases todas del mismo largo) y explica por qué. Determinista, sin IA y sin red.",
   "license": "BUSL-1.1",
+  "author": "Josulo72 (https://github.com/Josulo72)",
+  "homepage": "https://josulo72.github.io/textoneitor/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Josulo72/textoneitor.git",
+    "directory": "packages/linter"
+  },
+  "bugs": {
+    "url": "https://github.com/Josulo72/textoneitor/issues"
+  },
+  "keywords": [
+    "español",
+    "spanish",
+    "escritura",
+    "estilo",
+    "texto",
+    "markdown",
+    "revisor",
+    "prose",
+    "writing",
+    "cli",
+    "pre-commit",
+    "claude-code"
+  ],
   "type": "module",
   "main": "./dist/api/index.js",
   "types": "./dist/api/index.d.ts",
@@ -34,6 +58,9 @@
   "engines": {
     "node": ">=20"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "pnpm run build:ts && pnpm run build:rules && pnpm run build:bundle && pnpm run build:web",
     "build:ts": "tsc -p tsconfig.build.json",
@@ -42,7 +69,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build:web": "node scripts/bundle-web.mjs"
+    "build:web": "node scripts/bundle-web.mjs",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "ajv": "^8.17.0",

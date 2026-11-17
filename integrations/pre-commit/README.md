@@ -8,13 +8,13 @@ En el `.pre-commit-config.yaml` del proyecto:
 
 ```yaml
 repos:
-  - repo: https://github.com/jrollon/textoneitor
-    rev: v1.2.0
+  - repo: https://github.com/Josulo72/textoneitor
+    rev: v1.2.1
     hooks:
       - id: textoneitor
 ```
 
-Eso instala en el entorno de pre-commit la versión de `textoneitor` que declara `.pre-commit-hooks.yaml` en `additional_dependencies`, y analiza los archivos del commit. Hace falta que esa versión esté publicada en npm: la raíz de este repositorio es un workspace privado y no trae el binario.
+Eso instala en el entorno de pre-commit la versión de `textoneitor` que declara `.pre-commit-hooks.yaml` en `additional_dependencies`, y analiza los archivos del commit. La baja de npm, porque la raíz de este repositorio es un workspace privado y no trae el binario.
 
 Si prefieres que use la que ya tiene el proyecto en `node_modules`, y así no instalar nada aparte ni que se te descuadren las versiones entre lo que corre en tu máquina y lo que corre en el hook:
 

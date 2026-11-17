@@ -1,7 +1,7 @@
 node_modules/
 dist/
+*.tsbuildinfo
 *.tgz
-.textoneitor-cache/
 .textoneitor-cache/
 coverage/
 packages/linter/rulepack/

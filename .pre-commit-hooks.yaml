@@ -6,7 +6,7 @@
   description: Analiza el español de los archivos que se van a commitear. Mide patrones editoriales, no autoría.
   entry: textoneitor lint
   language: node
-  additional_dependencies: ["textoneitor@1.2.0"]
+  additional_dependencies: ["textoneitor@1.2.1"]
   types_or: [markdown, plain-text]
   pass_filenames: true
 

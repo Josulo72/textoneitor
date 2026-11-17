@@ -38,32 +38,26 @@ export const VIDEO = {
 
 export const AVATARS = [1, 2, 3, 4, 5].map((n) => asset(`/img/avatar-${n}.png`));
 
-/** El nombre del paquete todavía no está renombrado. Los comandos se construyen desde aquí. */
+/** El paquete tal como está en npm. Los comandos se construyen desde aquí. */
 export const PKG = {
   name: "TEXTOneitor",
   npm: "textoneitor",
-  version: "1.2.0",
+  version: "1.2.1",
   repo: "https://github.com/Josulo72/textoneitor",
   email: "jrollon@gmail.com",
 };
 
-/**
- * Lo que hay colgado hoy en la última release, con el nombre literal del archivo.
- * No se construye con PKG.npm a propósito: el paquete se renombra a textoneitor y
- * estos archivos seguirán llamándose como se llaman hasta que haya una release nueva.
- * Derivarlos del nombre del paquete manda a la gente a descargar algo que no existe.
- */
+/** El plugin de Claude Code sigue yendo en un zip de la release; el paquete ya se instala desde npm. */
 export const RELEASE = {
-  tgz: "textoneitor-1.2.0.tgz",
   pluginDir: "./textoneitor-claude-code",
-  /** La orden que deja instalada ese .tgz. La release nueva traerá `textoneitor`. */
+  /** La orden que deja instalada el paquete. */
   orden: "textoneitor",
 };
 
 /** La carpeta que crea `git clone`, que es el nombre del repositorio. */
 const REPO_DIR = PKG.repo.slice(PKG.repo.lastIndexOf("/") + 1);
 
-export const INSTALL_COMMAND = `npm i -D ${RELEASE.tgz}`;
+export const INSTALL_COMMAND = `npm i -D ${PKG.npm}`;
 
 export const NAV = [
   { id: "home", label: "Inicio" },
@@ -135,7 +129,7 @@ export const SECTIONS = {
     index: "06",
     label: "Instalar",
     title: "Tres formas de tenerlo",
-    lede: "Todavía no está en npm. Se instala desde el paquete de la última release, como plugin de Claude Code o desde el código.",
+    lede: "Con npm, como plugin de Claude Code o desde el código.",
   },
   faq: {
     index: "07",
@@ -372,15 +366,15 @@ export const PLANS: Plan[] = [
     id: "paquete",
     name: "El paquete",
     how: INSTALL_COMMAND,
-    tagline: "Un .tgz normal de npm, de la pestaña Releases.",
+    tagline: "Desde npm, como cualquier otra dependencia.",
     features: [
       `La orden ${RELEASE.orden} en tu proyecto`,
       "Los ocho perfiles y la configuración",
       "Node 20 o más",
       "Vale igual con pnpm y con yarn",
     ],
-    cta: "Ir a las releases",
-    href: `${PKG.repo}/releases`,
+    cta: "Verlo en npm",
+    href: `https://www.npmjs.com/package/${PKG.npm}`,
     featured: true,
   },
   {
@@ -389,7 +383,7 @@ export const PLANS: Plan[] = [
     how: `claude --plugin-dir ${RELEASE.pluginDir}`,
     tagline: "Carga la guía al empezar cada sesión.",
     features: [
-      "Un zip en la misma release",
+      "Un zip en la pestaña Releases",
       "La orden /revisar dentro de Claude",
       "Dos hooks opcionales",
       "Para Codex hay un AGENTS.md",

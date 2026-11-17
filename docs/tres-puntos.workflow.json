@@ -1,0 +1,271 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "TEXTOneitor, los tres puntos",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "hidden"
+    }
+  },
+  "lanes": [
+    {
+      "id": "repo",
+      "label": "Repositorio"
+    },
+    {
+      "id": "jorge",
+      "label": "Lo que firmas tú"
+    },
+    {
+      "id": "trabajo",
+      "label": "Banco de pruebas"
+    },
+    {
+      "id": "parada",
+      "label": "Aquí se para",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "limpiar",
+      "label": "1. Limpiar el repo",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "ritmo",
+      "label": "2. La regla del ritmo",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "npm",
+      "label": "3. Publicar en npm",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "inventario",
+    "commits",
+    "arbol_limpio",
+    "criterio",
+    "firma",
+    "holdout",
+    "decision",
+    "publicar",
+    "apuntar"
+  ],
+  "semanticChecks": {
+    "allowedRoots": [
+      "inventario"
+    ],
+    "allowedTerminals": [
+      "apuntar",
+      "sin_corpus",
+      "sigue_candidate"
+    ],
+    "requiredEdges": [
+      {
+        "from": "firma",
+        "to": "holdout"
+      }
+    ],
+    "requiredPaths": [
+      {
+        "from": "inventario",
+        "to": "apuntar"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "inventario",
+      "lane": "repo",
+      "col": 0,
+      "width": 160,
+      "type": "frontend",
+      "label": "Inventario",
+      "sublabel": "tres cambios sueltos"
+    },
+    {
+      "id": "commits",
+      "lane": "repo",
+      "col": 1,
+      "width": 160,
+      "type": "backend",
+      "label": "Tres commits",
+      "sublabel": "web, marca, artefacto",
+      "tag": "diff antes de cada uno"
+    },
+    {
+      "id": "arbol_limpio",
+      "lane": "jorge",
+      "col": 1,
+      "width": 160,
+      "type": "security",
+      "label": "Árbol limpio",
+      "sublabel": "gates y test en verde",
+      "tag": "puerta 1"
+    },
+    {
+      "id": "criterio",
+      "lane": "trabajo",
+      "col": 2,
+      "width": 160,
+      "type": "backend",
+      "label": "Criterio escrito",
+      "sublabel": "umbrales antes de medir"
+    },
+    {
+      "id": "firma",
+      "lane": "jorge",
+      "col": 3,
+      "width": 160,
+      "type": "security",
+      "label": "Firmas el criterio",
+      "sublabel": "sin firma no se dispara",
+      "tag": "puerta 2"
+    },
+    {
+      "id": "holdout",
+      "lane": "trabajo",
+      "col": 3,
+      "width": 160,
+      "type": "database",
+      "label": "Holdout v1.3",
+      "sublabel": "90 muestras congeladas",
+      "tag": "una sola vez"
+    },
+    {
+      "id": "decision",
+      "lane": "trabajo",
+      "col": 4,
+      "width": 160,
+      "type": "backend",
+      "label": "Decisión",
+      "sublabel": "ritmo-plano, stable o no"
+    },
+    {
+      "id": "publicar",
+      "lane": "jorge",
+      "col": 5,
+      "width": 160,
+      "type": "security",
+      "label": "npm publish",
+      "sublabel": "lo ejecutas tú",
+      "tag": "tras pack:check"
+    },
+    {
+      "id": "apuntar",
+      "lane": "repo",
+      "col": 5,
+      "width": 160,
+      "type": "external",
+      "label": "Apuntar a npm",
+      "sublabel": "pre-commit, README, web"
+    },
+    {
+      "id": "sin_corpus",
+      "lane": "parada",
+      "col": 3,
+      "width": 160,
+      "type": "messagebus",
+      "label": "Falta el corpus",
+      "sublabel": "la clase humana, en local"
+    },
+    {
+      "id": "sigue_candidate",
+      "lane": "parada",
+      "col": 4,
+      "width": 160,
+      "type": "messagebus",
+      "label": "Sigue candidate",
+      "sublabel": "no se toca el umbral"
+    }
+  ],
+  "edges": [
+    {
+      "from": "inventario",
+      "to": "commits",
+      "label": "separar"
+    },
+    {
+      "from": "commits",
+      "to": "arbol_limpio",
+      "label": "verificar",
+      "variant": "emphasis"
+    },
+    {
+      "from": "arbol_limpio",
+      "to": "criterio",
+      "label": "empieza la fase 2"
+    },
+    {
+      "from": "criterio",
+      "to": "firma",
+      "label": "a revisión"
+    },
+    {
+      "from": "firma",
+      "to": "holdout",
+      "label": "aprobado",
+      "variant": "security"
+    },
+    {
+      "from": "holdout",
+      "to": "decision",
+      "label": "resultados"
+    },
+    {
+      "from": "decision",
+      "to": "publicar",
+      "label": "reglas cerradas",
+      "variant": "emphasis"
+    },
+    {
+      "from": "publicar",
+      "to": "apuntar",
+      "label": "versión viva",
+      "variant": "security"
+    },
+    {
+      "from": "holdout",
+      "to": "sin_corpus",
+      "label": "sin textos no hay tiro",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "from": "decision",
+      "to": "sigue_candidate",
+      "label": "no cumple",
+      "variant": "security",
+      "role": "error"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Por qué la fase 2 va despacio",
+      "items": [
+        "ritmo-plano es candidate y sostiene esa separación",
+        "Mide el documento entero: no se adjudica por trozos",
+        "Se juzga por falsos positivos, con el techo en 1,5"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Las dos paradas",
+      "items": [
+        "Sin la clase humana en local no hay holdout que ejecutar",
+        "El holdout v1.3 está congelado y se gasta en un solo tiro",
+        "Si no cumple, sigue candidate y el umbral no se toca"
+      ]
+    }
+  ]
+}
