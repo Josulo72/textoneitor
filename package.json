@@ -1,7 +1,7 @@
 {
   "name": "textoneitor-workspace",
   "private": true,
-  "version": "1.2.1",
+  "version": "1.2.2",
   "packageManager": "pnpm@10.33.2",
   "engines": {
     "node": ">=20"

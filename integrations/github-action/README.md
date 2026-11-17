@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: 20
       - run: npm i -D textoneitor
-      - uses: Josulo72/textoneitor/integrations/github-action@v1.2.1
+      - uses: Josulo72/textoneitor/integrations/github-action@v1.2.2
         with:
           paths: docs README.md
           profile: readme
@@ -45,7 +45,7 @@ El paso `npm i -D textoneitor` no sobra: la Action usa el `textoneitor` que teng
 `findings`, `errors`, `warnings`, `max-index` y `passed`.
 
 ```yaml
-      - uses: Josulo72/textoneitor/integrations/github-action@v1.2.1
+      - uses: Josulo72/textoneitor/integrations/github-action@v1.2.2
         id: textoneitor
         with:
           fail-on: never
@@ -55,7 +55,7 @@ El paso `npm i -D textoneitor` no sobra: la Action usa el `textoneitor` que teng
 ## Con SARIF, para que salga en la pestaña de seguridad
 
 ```yaml
-      - uses: Josulo72/textoneitor/integrations/github-action@v1.2.1
+      - uses: Josulo72/textoneitor/integrations/github-action@v1.2.2
         with:
           sarif: textoneitor.sarif
           fail-on: never

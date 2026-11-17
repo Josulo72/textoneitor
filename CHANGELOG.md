@@ -4,6 +4,10 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ## [Sin publicar]
 
+## [1.2.2] - 2026-11-17
+
+Arreglos que salieron de pasar el revisor por documentos reales con tablas y listas. Las reglas son las mismas que en la 1.2.1; cambian los avisos falsos de repetición en tablas y listas, y la orden ya no se cae con textos grandes.
+
 ### Añadido
 
 - La orden avisa por stderr cuando un archivo nombrado a mano se queda fuera por `exclude` o por `.gitignore`. Sigue sin ser un error.

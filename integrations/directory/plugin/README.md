@@ -12,7 +12,7 @@ El comando `/revisar` pasa el revisor de textoneitor a un archivo, a un texto pe
 
 La skill es solo texto y no ejecuta nada.
 
-El comando `/revisar` le pide a Claude que ejecute `npx textoneitor@1.2.1` en tu ordenador, y la primera vez `npx` descarga ese paquete de npm. Claude te pide permiso antes de ejecutarlo y el análisis se hace en local, así que el texto no sale de tu equipo. Si prefieres no usar `npx`, instala el paquete en tu proyecto con `npm i -D textoneitor`.
+El comando `/revisar` le pide a Claude que ejecute `npx textoneitor@1.2.2` en tu ordenador, y la primera vez `npx` descarga ese paquete de npm. Claude te pide permiso antes de ejecutarlo y el análisis se hace en local, así que el texto no sale de tu equipo. Si prefieres no usar `npx`, instala el paquete en tu proyecto con `npm i -D textoneitor`.
 
 El plugin no guarda datos, no usa claves y no se conecta a ningún otro servicio.
 

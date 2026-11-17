@@ -42,7 +42,7 @@ export const AVATARS = [1, 2, 3, 4, 5].map((n) => asset(`/img/avatar-${n}.png`))
 export const PKG = {
   name: "TEXTOneitor",
   npm: "textoneitor",
-  version: "1.2.1",
+  version: "1.2.2",
   repo: "https://github.com/Josulo72/textoneitor",
   email: "jrollon@gmail.com",
 };

@@ -37,7 +37,7 @@ pnpm build
 node packages/linter/dist/cli/main.js lint README.md --profile readme
 ```
 
-El plugin de Claude Code, con la guía, va aparte, en la pestaña Releases del repositorio: `textoneitor-claude-code-1.2.1.zip`. Lo descomprimes donde quieras y lo cargas así:
+El plugin de Claude Code, con la guía, va aparte, en la pestaña Releases del repositorio: `textoneitor-claude-code-1.2.2.zip`. Lo descomprimes donde quieras y lo cargas así:
 
 ```
 claude --plugin-dir ./textoneitor-claude-code
