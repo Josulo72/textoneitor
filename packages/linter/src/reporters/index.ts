@@ -19,6 +19,20 @@ export function reportJson(result: ScanResult, opts: { pretty?: boolean; include
 
 /* ---------------- Terminal ---------------- */
 
+/**
+ * El texto analizado y los nombres de archivo no son de fiar: un archivo puede llevar secuencias
+ * de escape (colores, hiperenlaces, escribir en el portapapeles con OSC 52) o caracteres que invierten
+ * el sentido de la línea. En la salida para leer se muestran escapados, como \x1b. JSON y SARIF no se
+ * tocan: ya van escapados y tienen que dar el texto tal cual.
+ */
+const CONTROL = /[\u0000-\u0008\u000b-\u001f\u007f-\u009f‪-‮⁦-⁩]/g;
+export function limpiaControl(s: string): string {
+  return s.replace(CONTROL, (ch) => {
+    const n = ch.codePointAt(0)!;
+    return n <= 0xff ? `\\x${n.toString(16).padStart(2, "0")}` : `\\u${n.toString(16).padStart(4, "0")}`;
+  });
+}
+
 const COLORS = {
   reset: "\x1b[0m",
   dim: "\x1b[2m",
@@ -39,11 +53,11 @@ export function reportTerminal(result: ScanResult, opts: { color?: boolean; verb
     const suppressed = file.findings.length - active.length;
     if (active.length === 0 && !opts.verbose) continue;
     const idx = file.score.index === null ? c("dim", `índice: n/d (${file.score.eligibleWords} palabras, mínimo ${file.score.minWords})`) : `índice ${c("bold", String(file.score.index))}/100`;
-    lines.push(`${c("bold", file.path)}  ${idx}${suppressed ? c("dim", `  (${suppressed} suprimidos)`) : ""}`);
+    lines.push(`${c("bold", limpiaControl(file.path))}  ${idx}${suppressed ? c("dim", `  (${suppressed} suprimidos)`) : ""}`);
     for (const f of active) {
       const pos = `${f.range.start.line}:${f.range.start.column}`;
-      lines.push(`  ${pos.padEnd(8)} ${levelTag(f)} ${f.message}  ${c("dim", f.rule)}`);
-      if (f.snippet && opts.verbose) lines.push(`           ${c("dim", `«${f.snippet}»`)}`);
+      lines.push(`  ${pos.padEnd(8)} ${levelTag(f)} ${limpiaControl(f.message)}  ${c("dim", f.rule)}`);
+      if (f.snippet && opts.verbose) lines.push(`           ${c("dim", `«${limpiaControl(f.snippet)}»`)}`);
     }
     if (file.score.contributors.length && opts.verbose) {
       lines.push(`  ${c("dim", "contribuyentes: " + file.score.contributors.slice(0, 5).map((x) => `${x.rule} (${x.findings})`).join(", "))}`);
@@ -150,7 +164,7 @@ export function reportRevision(result: ScanResult, rules: CompiledRule[], opts: 
     const active = file.findings.filter((f) => !f.suppressed && (opts.verbose || f.level !== "info"));
     if (!active.length) continue;
     const idx = file.score.index === null ? "sin índice (texto corto)" : `índice ${file.score.index}/100`;
-    out.push(`${file.path} (${idx})`, "");
+    out.push(`${limpiaControl(file.path)} (${idx})`, "");
     const groups = new Map<string, Finding[]>();
     for (const f of active) {
       const g = groups.get(f.rule);
@@ -165,8 +179,8 @@ export function reportRevision(result: ScanResult, rules: CompiledRule[], opts: 
       const wholeText = r?.scope === "document" && r.detector === "structure";
       for (const f of fs) {
         const pos = `${f.range.start.line}:${f.range.start.column}`;
-        const where = wholeText ? " Afecta a todo el texto." : f.snippet ? ` Fragmento: "${f.snippet.replace(/\s+/g, " ")}"` : "";
-        out.push(`  - ${wholeText ? "" : `${pos} `}${f.message}${where}`);
+        const where = wholeText ? " Afecta a todo el texto." : f.snippet ? ` Fragmento: "${limpiaControl(f.snippet.replace(/\s+/g, " "))}"` : "";
+        out.push(`  - ${wholeText ? "" : `${pos} `}${limpiaControl(f.message)}${where}`);
       }
       out.push("");
     }

@@ -18,6 +18,38 @@ const OG_IMAGE = {
   alt: "TEXTOneitor: textos que no huelan a IA. 38 reglas, sin IA por dentro.",
 };
 
+// Política de seguridad de contenido. GitHub Pages no deja poner cabeceras, así que va
+// en una <meta> (por eso no lleva frame-ancestors, que en <meta> se ignora).
+// connect-src 'self' es lo que hace cumplir lo que dice la web: el texto del revisor
+// no puede salir a ningún otro sitio aunque alguien cuele un script.
+// 'unsafe-inline' en scripts hace falta porque la exportación estática de Next mete
+// scripts en línea y sin servidor no hay nonce posible. En desarrollo no se aplica:
+// next dev necesita eval.
+const origen = (url?: string) => {
+  try {
+    return url ? new URL(url).origin : "";
+  } catch {
+    return "";
+  }
+};
+const MEDIOS = [origen(process.env.NEXT_PUBLIC_ASSET_BASE), origen(process.env.NEXT_PUBLIC_VIDEO_BASE)]
+  .filter(Boolean)
+  .join(" ");
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  `img-src 'self' data: blob: ${MEDIOS}`.trim(),
+  `media-src 'self' ${MEDIOS}`.trim(),
+  "font-src 'self'",
+  "connect-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'none'",
+  "upgrade-insecure-requests",
+].join("; ");
+const CON_CSP = process.env.NODE_ENV === "production";
+
 export const metadata: Metadata = {
   metadataBase: new URL(URL_WEB),
   title: TITLE,
@@ -46,6 +78,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        {CON_CSP && <meta httpEquiv="Content-Security-Policy" content={CSP} />}
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+      </head>
       <body>{children}</body>
     </html>
   );
