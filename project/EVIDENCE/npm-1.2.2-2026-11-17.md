@@ -41,9 +41,20 @@ pack:check -> 0  (Empaquetado en verde)
 textoneitor --version -> 1.2.2
 ```
 
-## Lo que queda por hacer, y quién
+## Después de publicar
 
-- Mezclar la rama en `main`.
-- `npm publish` desde `packages/linter`, con la verificación en dos pasos. Lo hace el propietario.
-- Etiqueta `v1.2.2` y release en GitHub con el `.tgz` y el zip del plugin.
-- Probar después `npm i -D textoneitor` en una carpeta limpia, el hook de pre-commit con `rev: v1.2.2` y la Action con `@v1.2.2`.
+Mezclado en `main` con el pull request 9 (4bb06dd) y publicado por el propietario el mismo día desde `packages/linter`. El registro tardó un par de minutos en servir la versión.
+
+- `npm view textoneitor`: versión 1.2.2, `latest`, shasum `eddd21d69cb64e82e5caab0a2ae59daab688db6a`, el mismo que imprimió `npm publish`.
+- Etiqueta `v1.2.2` sobre 4bb06dd y release en GitHub con `textoneitor-1.2.2.tgz` bajado del registro (367.642 bytes, mismo shasum) y `textoneitor-claude-code-1.2.2.zip` (16 archivos; lleva además el icono del plugin, que en la 1.2.1 no existía). La orden que va dentro del zip responde 1.2.2.
+- En una carpeta limpia con espacios y eñe, `npm i -D textoneitor` instala la 1.2.2. `npx textoneitor --version` da 1.2.2 y `lint -f json` sobre `examples/muestra-ia.md` da el mismo JSON que el repositorio, salvo los tiempos. Una tabla con celdas "6 de 6" y una lista con "Se añade…" tres veces dan 0 hallazgos con la versión instalada.
+
+## Lo que no está comprobado
+
+- El hook de pre-commit con `rev: v1.2.2`: en esta máquina no está `pre-commit`.
+- La GitHub Action con `@v1.2.2`: no hay ningún workflow en el repositorio que la use.
+- El plugin cargado en Claude Code desde el zip.
+
+## Aviso de npm audit
+
+Al instalar, npm avisa de "4 high severity vulnerabilities". Es una sola, en cadena: `picomatch` (ReDoS con ciertos patrones, GHSA-fc5q-39xc-vjpf), que llega por `fast-glob` → `micromatch`. npm dice que no hay arreglo disponible. Los patrones que recibe `fast-glob` aquí son los que escribe el propio usuario en la orden o en su `textoneitor.yml`, así que el riesgo real es bajo, pero quien instale lo va a ver. Quitarlo es cambiar de dependencia y no se ha tocado. Pasaba igual con la 1.2.1.

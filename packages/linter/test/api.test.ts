@@ -13,6 +13,17 @@ describe("API programática", () => {
     expect(h.findings.filter((f) => f.level !== "info")).toHaveLength(0);
   });
 
+  it("la salida de terminal y de revisión no deja pasar secuencias de escape del texto", () => {
+    // OSC 52 escribe en el portapapeles de la terminal; U+202E invierte la línea.
+    const malo = "\x1b]52;c;aGFjaw==\x07‮" + AI_TEXT;
+    const r = api.lintText(malo, { format: "markdown", config: {} });
+    const scan = { ...api.lintProject({ cwd: tmpProject({ "a.md": "x\n" }), noCache: true }), files: [{ ...r, path: "a\x1b[31m.md" }] };
+    for (const out of [api.reportTerminal(scan, { verbose: true }), api.render("revision", scan, [], { verbose: true })]) {
+      expect(out).not.toMatch(/[\x1b\x07‮]/);
+    }
+    expect(api.reportTerminal(scan, { verbose: true })).toContain("\\x1b");
+  });
+
   it("lintText con configuración en línea", () => {
     const r = api.lintText(AI_TEXT, { format: "markdown", config: { rules: { "lexico/*": "off" } } });
     expect(r.findings.some((f) => f.rule.startsWith("lexico/"))).toBe(false);
